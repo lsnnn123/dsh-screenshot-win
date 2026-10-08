@@ -9,6 +9,16 @@
 
 这是一个**标准的 DSH bundle 插件**：`package.json` 里声明 `dsh.bundle.patch` 与 `dsh.client`，可以像市场里的插件一样安装、在「插件」页面里启用/关闭/卸载，也可以直接发布到 npm 并提交到插件市场。
 
+## 界面截图
+
+两张实机截图（都是用本插件自己截的）：
+
+![输入框工具行的相机按钮与中文截图状态提示](assets/screenshot-1.png)
+
+![整屏截图的结果（插件把图存到工作区，并在输入框提示状态）](assets/screenshot-2.png)
+
+插件市场（如 dsh-market 的详情页）会读取仓库根目录的 `screenshots.json`（列出 1–8 张图，路径相对该文件）来展示这些截图。
+
 ## 目录结构
 
 | 路径 | 作用 |
@@ -27,6 +37,7 @@
 | `test/client-sim.mjs` | 浏览器半的宿主侧模拟（模块注册、按钮流程、插图、语言、失败分支） |
 | `tools/asar.mjs` | 只读读取 `app.asar`（安装环境排查用） |
 | `tools/check-patch.mjs` | 用真实的 `dsh-app-boot` / `dsh-plugin-manager` 预演 bundle 解析与 patch 合成 |
+| `screenshots.json`、`assets/` | 市场详情页展示的界面截图（1–8 张，路径相对 `screenshots.json`） |
 | `LICENSE` | MIT |
 
 ## 配置
