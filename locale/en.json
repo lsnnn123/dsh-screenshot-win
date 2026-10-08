@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Screenshot",
+    "description": "A camera button in the composer plus an agent-callable screenshot tool: pick a region, a window, or the whole screen. The picture lands in the conversation and is saved to the workspace."
+  }
+}

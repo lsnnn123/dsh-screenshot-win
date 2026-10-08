@@ -1,0 +1,15 @@
+# dsh-screenshot-win bundle patch — inserts the screenshot plugin row into the profile.
+#
+# One package, both halves:
+#   * node half  (exports ".")      — registers the model-facing `screenshot` tool
+#     and the /dsh-screenshot-win/* HTTP routes the browser button talks to.
+#   * browser half (`dsh.client`, exports "./client") — the camera button in the
+#     composer tool row and the image row for the screenshot tool call.
+#
+# Install into the active profile with an absolute path:
+#   plugin_manager { action: "install_bundle", target: "E:\\GAME\\Kingdom Rush6\\dsh-screenshot-plugin" }
+# or the CLI equivalent:
+#   dsh plugin --profile web add link:"E:\GAME\Kingdom Rush6\dsh-screenshot-plugin"
+- insert:
+    - id: dsh-screenshot-win
+      name: 'dsh-screenshot-win'

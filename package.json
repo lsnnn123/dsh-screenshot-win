@@ -1,0 +1,51 @@
+{
+  "name": "dsh-screenshot-win",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DSH 屏幕截图插件：聊天输入框的相机按钮 + Agent 可调用的 screenshot 工具（框选区域 / 指定窗口 / 整屏）。截图直接进入对话，并保存到工作区。",
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "screenshot",
+    "screen-capture",
+    "capture"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./client/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "files": [
+    "lib",
+    "client",
+    "scripts",
+    "locale",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "os": [
+    "win32"
+  ]
+}

@@ -1,0 +1,18 @@
+# 提交到精选列表 awesome-dsh-plugin 的条目文件
+#
+# 用法：把本文件复制为 awesome-dsh-plugin 仓库里的
+#   data/plugins/lsnnn123__dsh-screenshot-win.yml
+# 然后向 https://github.com/awesome-dsh-plugin/awesome-dsh-plugin 提 PR（只加这一个文件）。
+# 注意：dsh-market/dsh-market 是「市场应用本身」，不是插件目录，不要往那边提条目。
+#
+# 前置条件（CI 会检查）：
+#   1. 仓库 package.json 声明 dsh.bundle（本仓库已有：./cordis.patch.yml）
+#   2. 仓库真实可用、非占位
+#   3. 仓库创建满 1 天
+#   4. 仓库打了 dsh-plugin topic
+url: https://github.com/lsnnn123/dsh-screenshot-win
+name: lsnnn123/dsh-screenshot-win
+category: tools
+description:
+  en: 'Windows-only screenshot plugin for DSH: a camera button in the chat composer plus a screenshot tool the agent can call, capturing a dragged region, a chosen window, or the whole screen; the image enters the conversation and is saved to the workspace.'
+  zh: 'DSH 屏幕截图插件（Windows）：聊天输入框的相机按钮 + Agent 可调用的 screenshot 工具，支持框选区域、指定窗口、整屏；截图直接进入对话，并保存到工作区。'
