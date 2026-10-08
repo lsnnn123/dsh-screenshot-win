@@ -106,13 +106,41 @@ node tools\check-patch.mjs
 
 界面语言跟着 DSH 走：`ctx.locale.active` 是 `zh*` 显示中文，其它显示英文；拿不到 locale 服务时按浏览器语言判断。
 
-## 打包与发布（上传插件市场）
+## 仓库与发布
 
-包名是 **`dsh-screenshot-win`**。原本想用的 `dsh-screenshot` 在 npm 上已被别人占用（`0.0.1`）；
+包名（也是仓库名）是 **`dsh-screenshot-win`**。原本想用的 `dsh-screenshot` 在 npm 上已被别人占用（`0.0.1`）；
 `dsh-screenshot-win` 经镜像查询确认未被占用（`https://registry.npmmirror.com/dsh-screenshot-win` → 404）。
 
+仓库已发布：**<https://github.com/lsnnn123/dsh-screenshot-win>**（public，默认分支 `main`，已打 `dsh-plugin` topic）。
+别人这样安装：
+
 ```powershell
-npm publish --access public
+plugin_manager action=install_bundle target="github:lsnnn123/dsh-screenshot-win"
+```
+
+### 本机怎么往上推
+
+这台机器上 `git push` 到 GitHub **不可用**，两个原因叠在一起：
+
+- `~/.gitconfig` 里有 `url.https://gh.ddlc.top/https://github.com/.insteadOf = https://github.com/`，把 GitHub 重写到镜像，镜像返回 **429**；
+- 绕过镜像直连时，schannel 报 `CRYPT_E_NO_REVOCATION_CHECK`，换 OpenSSL 报 `unable to get local issuer certificate`（证书环境有中间人代理）。
+
+而 PowerShell 的 `Invoke-RestMethod -SkipCertificateCheck` 访问 `api.github.com` 是通的，所以改用 Git Data API 发布：
+
+```powershell
+pwsh -File tools\publish-github.ps1              # 把本地 HEAD 同步到 GitHub（只传变化过的文件）
+pwsh -File tools\publish-github.ps1 -WhatIf      # 只看差异
+```
+
+凭据按 `-Token` → `$env:GITHUB_TOKEN` → Windows 凭据管理器里 `GitHub - https://api.github.com/lsnnn123` 的顺序取，token 不会打印。
+（将来若要恢复 git 正常工作：`git config --global --unset url.https://gh.ddlc.top/https://github.com/.insteadOf`，并给 git 配好能通过代理的 CA。）
+
+### npm 发布（可选）
+
+不被市场收录所必需；要发就这样：
+
+```powershell
+npm publish --access public --registry=https://registry.npmjs.org/
 ```
 
 发布前确认：
@@ -121,21 +149,33 @@ npm publish --access public
 - `files` 覆盖 `lib`、`client`、`scripts`、`locale`、`cordis.patch.yml`、`README.md`、`LICENSE`——
   少了 `scripts` 装出来的包会在采集时报找不到脚本；
 - `main` / `exports["."]` 指向的文件必须真的存在（插件管理器安装时要求入口产物就位）；
-- `author` / `repository` / `homepage` 与 LICENSE 的版权署名目前**留空**，发布前可按需补上；
-- 本机 npm 默认走镜像源，要发官方源就显式指定：`npm publish --registry=https://registry.npmjs.org/`。
+- `author` / `repository` / `homepage` 与 LICENSE 的版权署名目前**留空**（若要发 npm，`repository` 需指回本仓库）。
 
-发布后别人的安装方式：`plugin_manager action=install_bundle target="dsh-screenshot-win"`（从 registry 拉包）；
-本机当前装的是方式 B 的本地目录联接（见上）。
+「插件」页面卡片直接显示 `package.json` 的 `description`（本包为中文）；市场条目文案读
+`locale/zh.json`、`locale/en.json` 的 `meta.title` / `meta.description`。
 
-市场元数据：
+## 上传到插件市场
 
-- 「插件」页面卡片直接显示 `package.json` 的 `description`（本包为中文）；
-- 市场条目文案读 `locale/zh.json`、`locale/en.json` 的 `meta.title` / `meta.description`；
-- 社区里已有别的截图插件（`paicat1/dsh-screenshot`、`ntesicn/dsh-screenshot-xn`、`dyf189/dsh-screenshot`），
-  名字不同、功能各有侧重，不冲突。
+⚠️ **`dsh-market/dsh-market` 是市场应用本身，不是插件目录**（它自己的 README 明确写了"请不要往本仓库提插件条目"）。
+市场的插件列表来自精选目录 **[awesome-dsh-plugin/awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)**，
+站点是 <https://awesome-dsh-plugin.com>；市场每次打开都实时抓 `awesome-dsh-plugin.com/plugins.json`。
 
-提交到市场：市场目录是 `awesome-dsh-plugin/awesome-dsh-plugin`（`README.zh.md` 列插件，站点 `awesome-dsh-plugin.com`），
-发一个 PR 把你的条目（owner / name / 一句话描述 / 分类）加进去即可。
+**上架 = 给精选目录提一个 PR，只加一个文件**：`data/plugins/lsnnn123__dsh-screenshot-win.yml`
+（本仓库 `market/` 下已经放好了这个文件，照抄即可）。`description.en` 必填，含 `: ` 必须加引号；分类用 `tools`。
+
+收录条件（CI 自动查）：
+
+| 条件 | 本仓库 |
+| --- | --- |
+| `package.json` 声明 `dsh.bundle`（**最常见的被拒原因是只写 `dsh.client`**） | ✅ `./cordis.patch.yml` |
+| 仓库有真实可用代码 | ✅ |
+| 仓库创建满 **1 天** | 2026-10-09 创建 → 次日之后才能提 |
+| 打了 `dsh-plugin` topic | ✅ |
+| npm 包 | 可选，没有也能收录（`install` 走 `github:owner/repo`） |
+| `screenshots.json` | 可选，有的话市场详情页会展示截图 |
+
+社区里已有别的截图插件（`paicat1/dsh-screenshot`、`wangzhanchao883/dsh-screenshot-capture`、
+`deepseekbluefish/dsh-screenshot-plugin`、`ntesicn/dsh-screenshot-xn`），名字与功能侧重都不同，不冲突。
 
 ## 验证
 
